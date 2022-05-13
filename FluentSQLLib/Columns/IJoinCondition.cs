@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FluentSQLLib
+namespace FluentSQLLib.Columns
 {
-	public interface ISelect:IQuery
+	public interface IJoinCondition
 	{
-		string TableName
+		IColumn Column1
+		{
+			get;
+		}
+		IColumn Column2
 		{
 			get;
 		}

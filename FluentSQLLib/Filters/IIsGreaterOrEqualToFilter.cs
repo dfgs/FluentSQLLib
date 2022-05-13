@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FluentSQLLib
+namespace FluentSQLLib.Filters
 {
-	public abstract class Query:IQuery
+	public interface IIsGreaterOrEqualToFilter<TVal>:IColumnFilter<TVal>
 	{
 	}
+
+	
 }

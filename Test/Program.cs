@@ -4,6 +4,3 @@ using Test.Models;
 
 Console.WriteLine("Hello, World!");
 
-var query = Select.From<Student>().Column(tbl => tbl.Name).Column(tbl=>tbl.Id);
-
-
