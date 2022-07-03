@@ -12,7 +12,7 @@ using FluentSQLLib.Tables;
 
 namespace FluentSQLLib.Columns
 {
-	public class Column<TVal>:IColumn<TVal>
+	public class Column:IColumn
 	{
 		
 
@@ -22,7 +22,7 @@ namespace FluentSQLLib.Columns
 			private set;
 		}
 
-		public TVal? DefaultValue
+		public object? DefaultValue
 		{
 			get;
 			private set;
@@ -55,16 +55,20 @@ namespace FluentSQLLib.Columns
 
 		public Type DataType
 		{
-			get { return typeof(TVal); }
+			get;
+			private set;
 		}
 
 
-		public Column(ITable Table, string Name, TVal? DefaultValue, ColumnConstraints Constraint, bool IsIdentity, bool IsNullable)
+		public Column(ITable Table, string Name, Type DataType, object? DefaultValue, ColumnConstraints Constraint, bool IsIdentity, bool IsNullable)
 		{
 			if (Table == null) throw new ArgumentNullException(nameof(Table));
+			if (Name == null) throw new ArgumentNullException(nameof(Name));
+			if (DataType == null) throw new ArgumentNullException(nameof(DataType));
 			if ((DefaultValue == null) && (!IsNullable) && (!IsIdentity)) throw new InvalidOperationException("Default value cannot be null since column is not nullable");
 
 			this.Table = Table;
+			this.DataType = DataType;
 			this.DefaultValue = DefaultValue;
 			this.Constraint = Constraint;
 			this.IsIdentity = IsIdentity;
@@ -73,7 +77,7 @@ namespace FluentSQLLib.Columns
 		}
 
 
-		public IIsEqualToFilter<TVal> IsEqualTo(TVal Value)
+		/*public IIsEqualToFilter<TVal> IsEqualTo(TVal Value)
 		{
 			return new IsEqualToFilter<TVal>(this, Value);
 		}
@@ -104,7 +108,7 @@ namespace FluentSQLLib.Columns
 		public IIsNotNullFilter IsNotNull()
 		{
 			return new IsNotNullFilter(this);
-		}
+		}*/
 
 		public override string ToString()
 		{

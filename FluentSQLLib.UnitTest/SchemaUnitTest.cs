@@ -2,6 +2,7 @@ using FluentSQLLib.UnitTest.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FluentSQLLib.UnitTest
 {
@@ -23,6 +24,36 @@ namespace FluentSQLLib.UnitTest
 
 		}
 		#endregion
+
+		#region GetProperties
+		[TestMethod]
+		public void Schema_ShouldGetPropertiesFromClassWithoutAttributes()
+		{
+			string[] properties;
+
+			properties = Schema<TableWithoutAttributes>.GetProperties().ToArray();
+			Assert.AreEqual(4, properties.Length);
+			Assert.AreEqual("Name", properties[0]);
+			Assert.AreEqual("ID", properties[1]);
+			Assert.AreEqual("Description", properties[2]);
+			Assert.AreEqual("NullID", properties[3]);
+
+		}
+		[TestMethod]
+		public void Schema_ShouldGetPropertiesFromClassWithAttributes()
+		{
+			string[] properties;
+
+			properties = Schema<TableWithAttributes>.GetProperties().ToArray();
+			Assert.AreEqual(4, properties.Length);
+			Assert.AreEqual("Name", properties[0]);
+			Assert.AreEqual("ID", properties[1]);
+			Assert.AreEqual("Description", properties[2]);
+			Assert.AreEqual("NullID", properties[3]);
+
+		}
+		#endregion
+
 
 		#region GetColumnName
 #nullable disable
@@ -121,6 +152,34 @@ namespace FluentSQLLib.UnitTest
 
 		#endregion
 
+		#region GetDataType
+#nullable disable
+		[TestMethod]
+		public void GetDataType_ShouldCheckNullParameter()
+		{
+			Assert.ThrowsException<ArgumentNullException>(() => Schema<TableWithAttributes>.GetDataType(null));
+			Assert.ThrowsException<ArgumentNullException>(() => Schema<TableWithoutAttributes>.GetDataType(null));
+
+		}
+#nullable restore
+		[TestMethod]
+		public void GetDataType_ShouldThrowErrorIfPropertyNameIsNotFound()
+		{
+			Assert.ThrowsException<KeyNotFoundException>(() => Schema<TableWithAttributes>.GetDataType("invalidName"));
+			Assert.ThrowsException<KeyNotFoundException>(() => Schema<TableWithoutAttributes>.GetDataType("invalidName"));
+		}
+		[TestMethod]
+		public void GetDataType_ShouldReturnCorrectValue()
+		{
+			Assert.AreEqual(typeof(string), Schema<TableWithoutAttributes>.GetDataType("Name"));
+			Assert.AreEqual(typeof(int?), Schema<TableWithoutAttributes>.GetDataType("ID"));
+			Assert.AreEqual(typeof(string), Schema<TableWithoutAttributes>.GetDataType("Description"));
+			Assert.AreEqual(typeof(int?), Schema<TableWithoutAttributes>.GetDataType("NullID"));
+			Assert.AreEqual(typeof(string), Schema<TableWithAttributes>.GetDataType("Description"));
+			Assert.AreEqual(typeof(int?), Schema<TableWithAttributes>.GetDataType("NullID"));
+		}
+
+		#endregion
 
 	}
 

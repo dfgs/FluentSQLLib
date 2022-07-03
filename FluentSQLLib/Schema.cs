@@ -43,6 +43,15 @@ namespace FluentSQLLib
 			return pi.GetCustomAttribute<TAttribute>(true);
 		}
 
+		public static IEnumerable<string> GetProperties()
+		{
+			Type type;
+
+			type = typeof(T);
+
+			return type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Select(item => item.Name);
+		}
+
 		public static string GetTableName()
 		{
 			Type type;
@@ -70,15 +79,27 @@ namespace FluentSQLLib
 		{
 			if (PropertyName == null) throw new ArgumentNullException(nameof(PropertyName));
 			PropertyInfo? pi;
-			//CustomAttributeData? nullableAttribute;
 			
 			pi = GetProperty(PropertyName);
 			if (pi == null) throw new KeyNotFoundException($"Property {PropertyName} was not found in table {GetTableName()}");
 
-			//nullableAttribute = pi.GetCustomAttributesData().FirstOrDefault(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableAttribute");
 			var nullabilityInfo = nullabilityContext.Create(pi);
 
 			return (nullabilityInfo.WriteState is NullabilityState.Nullable) || (Nullable.GetUnderlyingType(pi.PropertyType)!=null);
 		}
+
+		public static Type GetDataType(string PropertyName)
+		{
+			if (PropertyName == null) throw new ArgumentNullException(nameof(PropertyName));
+			PropertyInfo? pi;
+
+			pi = GetProperty(PropertyName);
+			if (pi == null) throw new KeyNotFoundException($"Property {PropertyName} was not found in table {GetTableName()}");
+
+
+			return pi.PropertyType;
+		}
+
+
 	}
 }

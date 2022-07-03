@@ -5,9 +5,7 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentSQLLib", "FluentSQLLib\FluentSQLLib.csproj", "{94BCF1D1-182E-460C-9527-26490EB2CB7D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{F8CA756C-8D9B-416C-A1CA-889AA03A7C6B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentSQLLib.UnitTest", "FluentSQLLib.UnitTest\FluentSQLLib.UnitTest.csproj", "{BFD867D9-0220-47D9-ABCB-37E672DCDDB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentSQLLib.UnitTest", "FluentSQLLib.UnitTest\FluentSQLLib.UnitTest.csproj", "{BFD867D9-0220-47D9-ABCB-37E672DCDDB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		{94BCF1D1-182E-460C-9527-26490EB2CB7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94BCF1D1-182E-460C-9527-26490EB2CB7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94BCF1D1-182E-460C-9527-26490EB2CB7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8CA756C-8D9B-416C-A1CA-889AA03A7C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8CA756C-8D9B-416C-A1CA-889AA03A7C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8CA756C-8D9B-416C-A1CA-889AA03A7C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8CA756C-8D9B-416C-A1CA-889AA03A7C6B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BFD867D9-0220-47D9-ABCB-37E672DCDDB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BFD867D9-0220-47D9-ABCB-37E672DCDDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFD867D9-0220-47D9-ABCB-37E672DCDDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU

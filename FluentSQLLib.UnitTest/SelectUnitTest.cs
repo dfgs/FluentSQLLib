@@ -29,6 +29,9 @@ namespace FluentSQLLib.UnitTest
 			Assert.AreEqual("Table", query.Table.Name);
 		}
 
+
+
+
 		[TestMethod]
 		public void Select_ShouldAddColumnsFromClassWithoutAttributes()
 		{
@@ -49,6 +52,36 @@ namespace FluentSQLLib.UnitTest
 			Assert.AreEqual("colName", query.Columns.ElementAt(0).Name);
 			Assert.AreEqual("colID", query.Columns.ElementAt(1).Name);
 		}
+
+
+
+		[TestMethod]
+		public void Select_ShouldAddAllColumnsFromClassWithoutAttributes()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().AllColumns();
+			Assert.AreEqual(4, query.Columns.Count());
+			Assert.AreEqual("Name", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("ID", query.Columns.ElementAt(1).Name);
+			Assert.AreEqual("Description", query.Columns.ElementAt(2).Name);
+			Assert.AreEqual("NullID", query.Columns.ElementAt(3).Name);
+		}
+		[TestMethod]
+		public void Select_ShouldAddAllColumnsFromClassWithAttributes()
+		{
+			ISelect<TableWithAttributes> query;
+
+			query = new Select<TableWithAttributes>().AllColumns();
+			Assert.AreEqual(4, query.Columns.Count());
+			Assert.AreEqual("colName", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("colID", query.Columns.ElementAt(1).Name);
+			Assert.AreEqual("colDescription", query.Columns.ElementAt(2).Name);
+			Assert.AreEqual("colNullID", query.Columns.ElementAt(3).Name);
+		}
+
+
+
 	}
 
 

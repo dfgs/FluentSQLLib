@@ -53,20 +53,41 @@ namespace FluentSQLLib.Queries
             string propertyName;
             string columnName;
             bool isNullable;
-            TVal? defaultValue;
+            object? defaultValue;
+            Type dataType;
 
             propertyName=ExpressionHelper.GetPropertyName(ValueExpression);
             columnName = Schema<T>.GetColumnName(propertyName);
-            isNullable=Schema<T>.GetIsNullable(propertyName);
-            defaultValue = (TVal?)Schema<T>.GetDefaultValue(propertyName);
+            dataType = Schema<T>.GetDataType(propertyName);
+            isNullable =Schema<T>.GetIsNullable(propertyName);
+            defaultValue = Schema<T>.GetDefaultValue(propertyName);
 
-            columns.Add(new Column<TVal>(this.table,columnName,defaultValue,ColumnConstraints.None,false,isNullable));
+            columns.Add(new Column(this.table, columnName, dataType, defaultValue,ColumnConstraints.None,false,isNullable));
+
+            return this;
+
+        }
+        public ISelect<T> AllColumns()
+        {
+            string columnName;
+            bool isNullable;
+            object? defaultValue;
+            Type dataType;
+
+            foreach (string propertyName in Schema<T>.GetProperties())
+            {
+                columnName = Schema<T>.GetColumnName(propertyName);
+                dataType = Schema<T>.GetDataType(propertyName);
+                isNullable = Schema<T>.GetIsNullable(propertyName);
+                defaultValue = Schema<T>.GetDefaultValue(propertyName);
+
+                columns.Add(new Column(this.table,columnName, dataType, defaultValue, ColumnConstraints.None, false, isNullable));
+            }
 
             return this;
 
         }
 
-       
 
         public ISelect<T> Where(params IFilter[] Filters)
         {

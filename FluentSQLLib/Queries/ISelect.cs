@@ -22,9 +22,10 @@ namespace FluentSQLLib.Queries
 		}
 
 		//ISelect From<T>();
-	
+
+		ISelect<T> AllColumns();
 		ISelect<T> Column<TVal>(Expression<Func<T, TVal>> ValueExpression);
- 		ISelect<T> Where(params IFilter[] Filters);
+		ISelect<T> Where(params IFilter[] Filters);
 		ISelect<T> OrderBy(params IColumn[] Columns);
 		ISelect<T> OrderBy(OrderModes OrderMode, params IColumn[] Columns);
 		ISelect<T> Top(int Limit);
