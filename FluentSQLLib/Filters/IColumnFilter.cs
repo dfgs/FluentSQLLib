@@ -25,9 +25,9 @@ namespace FluentSQLLib.Filters
 	}
 
 	
-	public interface IColumnFilter<TVal> : IColumnFilter
+	/*public interface IColumnFilter : IColumnFilter
 	{
-		new IColumn<TVal> Column
+		new IColumn Column
 		{
 			get;
 		}
@@ -37,7 +37,7 @@ namespace FluentSQLLib.Filters
 		}
 
 		
-	}
+	}*/
 
 	
 

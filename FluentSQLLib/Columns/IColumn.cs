@@ -16,54 +16,14 @@ namespace FluentSQLLib.Columns
 			get;
 		}
 
-		ITable Table
+		string Table
 		{
 			get;
 		}
 			   
-		ColumnConstraints Constraint
-		{
-			get;
-		}
-
-		bool IsNullable
-		{
-			get;
-		}
-
-		Type DataType
-		{
-			get;
-		}
-
-		bool IsIdentity
-		{
-			get;
-		}
-
-		object? DefaultValue
-		{
-			get;
-		}
-		//void Initialize(ISingleTable Table,string Name);
-		/*object GetValue(IRow Row);
-		void SetValue(IRow Row,object Value);*/
+		
 	}
 
-	public interface IColumn<TVal>:IColumn
-	{
-		
-
-		/*IIsNullFilter IsNull();
-		IIsNotNullFilter IsNotNull();
-		
-		IIsEqualToFilter<TVal> IsEqualTo(TVal Value);
-		IIsNotEqualToFilter< TVal> IsNotEqualTo(TVal Value);
-		IIsGreaterThanFilter<TVal> IsGreaterThan(TVal Value);
-		IIsLowerThanFilter<TVal> IsLowerThan(TVal Value);
-		IIsGreaterOrEqualToFilter<TVal> IsGreaterOrEqualTo(TVal Value);
-		IIsLowerOrEqualToFilter<TVal> IsLowerOrEqualTo(TVal Value);//*/
-
-	}//*/
+	
 
 }

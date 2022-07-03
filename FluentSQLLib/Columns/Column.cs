@@ -16,36 +16,11 @@ namespace FluentSQLLib.Columns
 	{
 		
 
-		public ITable Table
+		public string Table
 		{
 			get;
 			private set;
 		}
-
-		public object? DefaultValue
-		{
-			get;
-			private set;
-		}
-
-		public ColumnConstraints Constraint
-		{
-			get;
-			private set;
-		}
-		public bool IsIdentity
-		{
-			get;
-			private set;
-		}
-
-		public bool IsNullable
-		{
-			get;
-			private set;
-		}
-
-		
 
 		public string Name
 		{
@@ -53,26 +28,13 @@ namespace FluentSQLLib.Columns
 			private set;
 		}
 
-		public Type DataType
-		{
-			get;
-			private set;
-		}
 
-
-		public Column(ITable Table, string Name, Type DataType, object? DefaultValue, ColumnConstraints Constraint, bool IsIdentity, bool IsNullable)
+		public Column(string Table, string Name)
 		{
 			if (Table == null) throw new ArgumentNullException(nameof(Table));
 			if (Name == null) throw new ArgumentNullException(nameof(Name));
-			if (DataType == null) throw new ArgumentNullException(nameof(DataType));
-			if ((DefaultValue == null) && (!IsNullable) && (!IsIdentity)) throw new InvalidOperationException("Default value cannot be null since column is not nullable");
-
+			
 			this.Table = Table;
-			this.DataType = DataType;
-			this.DefaultValue = DefaultValue;
-			this.Constraint = Constraint;
-			this.IsIdentity = IsIdentity;
-			this.IsNullable = IsNullable;
 			this.Name = Name;
 		}
 

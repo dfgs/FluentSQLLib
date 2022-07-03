@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FluentSQLLib.Filters
 {
-	public interface IIsGreaterThanFilter< TVal>:IColumnFilter< TVal>
+	public interface IIsGreaterThanFilter< TVal>:IColumnFilter
 	{
 	}
 

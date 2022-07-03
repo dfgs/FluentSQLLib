@@ -20,12 +20,15 @@ namespace FluentSQLLib.Queries
 		{
 			get;
 		}
-
+		IEnumerable<IFilter> Filters
+		{
+			get;
+		}
 		//ISelect From<T>();
 
 		ISelect<T> AllColumns();
 		ISelect<T> Column<TVal>(Expression<Func<T, TVal>> ValueExpression);
-		ISelect<T> Where(params IFilter[] Filters);
+		ISelect<T> Where(Expression<Func<T,bool>> FilterExpression);
 		ISelect<T> OrderBy(params IColumn[] Columns);
 		ISelect<T> OrderBy(OrderModes OrderMode, params IColumn[] Columns);
 		ISelect<T> Top(int Limit);

@@ -8,19 +8,18 @@ using System.Threading.Tasks;
 
 namespace FluentSQLLib.Filters
 {
-	public abstract class ColumnFilter<TVal>:IColumnFilter<TVal>
+	public abstract class ColumnFilter:IColumnFilter
 	{
-		private IColumn<TVal> column;
-		IColumn IColumnFilter.Column => column;
-		public IColumn<TVal> Column => column;
+		private IColumn column;
+		public IColumn Column => column;
 
-		private TVal value;
-		object IColumnFilter.Value => value;
-		public TVal Value => value;
+		private object value;
+		public object Value => value;
 
 
-		public ColumnFilter(IColumn<TVal> Column,TVal Value)
+		public ColumnFilter(IColumn Column,object Value)
 		{
+			if (Value == null) throw new ArgumentNullException(nameof(Value));
 			this.column = Column;this.value = Value;
 		}
 

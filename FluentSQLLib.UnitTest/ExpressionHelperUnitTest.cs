@@ -11,7 +11,7 @@ namespace FluentSQLLib.UnitTest
 		[TestMethod]
 		public void GetColumnName_ShouldGetPropertyNameFromClassWithoutAttributes()
 		{
-			Assert.AreEqual("Name", ExpressionHelper.GetPropertyName<TableWithoutAttributes, string?>(tbl => tbl.Name));
+			Assert.AreEqual("Name", ExpressionHelper.GetPropertyName<TableWithoutAttributes,string?>(tbl => tbl.Name));
 			Assert.AreEqual("ID", ExpressionHelper.GetPropertyName<TableWithoutAttributes, int?>(tbl => tbl.ID));
 		}
 		[TestMethod]
