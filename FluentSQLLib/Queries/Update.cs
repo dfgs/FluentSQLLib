@@ -6,7 +6,7 @@ namespace FluentSQLLib.Queries
 {
    
 
-    public class Delete<TTable> : IDelete<TTable>
+    public class Update<TTable> : IUpdate<TTable>
     {
         public string Table
 		{
@@ -15,30 +15,47 @@ namespace FluentSQLLib.Queries
 
         private List<IJoinCondition> joinConditions;
         public IEnumerable<IJoinCondition> JoinConditions => joinConditions;
+        
+        private List<ISetter> setters;
+        public IEnumerable<ISetter> Setters => setters;
 
         private IFilter? filter;
         public IFilter? Filter => filter;
 
-        public Delete()
+        public Update()
 		{
             joinConditions = new List<IJoinCondition>();
+            setters = new List<ISetter>();
         }
         
        
         
 
 
-        public IDelete<TTable> Where(IFilter Filter)
+        public IUpdate<TTable> Where(IFilter Filter)
         {
             if (Filter == null) throw new ArgumentNullException(nameof(Filter));
             this.filter=Filter;
 
             return this;
         }
-       
 
-        
-        public IDelete<TTable> Join<TTable1, TTable2>(Expression<Func<TTable1, object?>> Column1, Expression<Func<TTable2, object?>> Column2)
+        public IUpdate<TTable> Set<TValue>(Expression<Func<TTable, TValue>> Column, TValue Value)
+		{
+            string propertyName;
+            string columnName;
+
+            if (Column == null) throw new ArgumentNullException(nameof(Column));
+
+            propertyName = ExpressionHelper.GetPropertyName(Column);
+            columnName = Schema<TTable>.GetColumnName(propertyName);
+
+            setters.Add(new Setter<TValue>(new Column(Schema<TTable>.GetTableName(), columnName), Value));
+            return this;
+        }
+
+
+        public IUpdate<TTable> Join<TTable1, TTable2>(Expression<Func<TTable1, object?>> Column1, Expression<Func<TTable2, object?>> Column2)
 		{
             string propertyName1;
             string columnName1;

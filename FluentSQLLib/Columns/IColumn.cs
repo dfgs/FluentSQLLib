@@ -1,6 +1,5 @@
 ﻿
 using FluentSQLLib.Filters;
-using FluentSQLLib.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;

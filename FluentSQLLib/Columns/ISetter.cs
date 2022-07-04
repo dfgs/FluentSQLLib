@@ -1,17 +1,22 @@
-﻿using FluentSQLLib.Columns;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FluentSQLLib.Tables
+namespace FluentSQLLib.Columns
 {
-	public interface ITable
+	public interface ISetter
 	{
-		string Name
+		IColumn Column
 		{
 			get;
 		}
+
+		object? Value
+		{
+			get;
+		}
+
 	}
 }

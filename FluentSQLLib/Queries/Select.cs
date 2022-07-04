@@ -1,6 +1,5 @@
 ﻿using FluentSQLLib.Columns;
 using FluentSQLLib.Filters;
-using FluentSQLLib.Tables;
 using System.Linq.Expressions;
 
 namespace FluentSQLLib.Queries

@@ -1,6 +1,5 @@
 ﻿using FluentSQLLib.Columns;
 using FluentSQLLib.Filters;
-using FluentSQLLib.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace FluentSQLLib.Queries
 {
-	public interface IDelete: IQuery,IFilterableQuery, IJoinableQuery
+	public interface IDelete<TTable>: IQuery,IFilterableQuery, IJoinableQuery
 	{
-		string? Table
+		string Table
 		{
 			get;
 		}
 
-		IDelete From<TTable>();
-		IDelete Where(IFilter Filter);
-		IDelete Join<TTable1,TTable2>(Expression<Func<TTable1, object?>> Column1, Expression<Func<TTable2, object?>> Column2);
+		//IDelete From<TTable>();
+		IDelete<TTable> Where(IFilter Filter);
+		IDelete<TTable> Join<TTable1,TTable2>(Expression<Func<TTable1, object?>> Column1, Expression<Func<TTable2, object?>> Column2);
 
 
 	}
