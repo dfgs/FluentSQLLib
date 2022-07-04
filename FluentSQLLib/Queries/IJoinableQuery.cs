@@ -1,4 +1,5 @@
-﻿using FluentSQLLib.Filters;
+﻿using FluentSQLLib.Columns;
+using FluentSQLLib.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FluentSQLLib.Queries
 {
-	public interface IFilterableQuery : IQuery
+	public interface IJoinableQuery : IQuery
 	{
-		IFilter? Filter
+		IEnumerable<IJoinCondition> JoinConditions
 		{
 			get;
 		}

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FluentSQLLib.Queries
 {
-	public interface ISelect: IOrderableQuery
+	public interface ISelect: IQuery, IFilterableQuery,IOrderableQuery, IJoinableQuery
 	{
 		int Limit
 		{
@@ -21,15 +21,9 @@ namespace FluentSQLLib.Queries
 			get;
 		}
 
-		IEnumerable<IJoinCondition> JoinConditions
-		{
-			get;
-		}
+		
 
-		IFilter? Filter
-		{
-			get;
-		}
+		
 
 		ISelect AllFrom<TTable>();
 		ISelect From<TTable>(params Expression<Func<TTable, object?>>[] Columns);
