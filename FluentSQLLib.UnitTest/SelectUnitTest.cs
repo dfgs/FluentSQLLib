@@ -11,6 +11,7 @@ namespace FluentSQLLib.UnitTest
 	[TestClass]
 	public class SelectUnitTest
 	{
+		#region GetTableName
 		[TestMethod]
 		public void Select_ShouldGetTableNameFromClassWithoutAttributes()
 		{
@@ -29,9 +30,9 @@ namespace FluentSQLLib.UnitTest
 			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Column(tbl => tbl.ID);
 			Assert.AreEqual("Table", query.Table.Name);
 		}
+		#endregion
 
-		
-
+		#region select columns
 		[TestMethod]
 		public void Select_ShouldAddColumnsFromClassWithoutAttributes()
 		{
@@ -39,7 +40,9 @@ namespace FluentSQLLib.UnitTest
 
 			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Column(tbl => tbl.ID);
 			Assert.AreEqual(2, query.Columns.Count());
+			Assert.AreEqual("TableWithoutAttributes", query.Columns.ElementAt(0).Table);
 			Assert.AreEqual("Name", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("TableWithoutAttributes", query.Columns.ElementAt(1).Table);
 			Assert.AreEqual("ID", query.Columns.ElementAt(1).Name);
 		}
 		[TestMethod]
@@ -49,7 +52,9 @@ namespace FluentSQLLib.UnitTest
 
 			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Column(tbl => tbl.ID);
 			Assert.AreEqual(2, query.Columns.Count());
+			Assert.AreEqual("Table", query.Columns.ElementAt(0).Table);
 			Assert.AreEqual("colName", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(1).Table);
 			Assert.AreEqual("colID", query.Columns.ElementAt(1).Name);
 		}
 
@@ -62,9 +67,13 @@ namespace FluentSQLLib.UnitTest
 
 			query = new Select<TableWithoutAttributes>().AllColumns();
 			Assert.AreEqual(4, query.Columns.Count());
+			Assert.AreEqual("TableWithoutAttributes", query.Columns.ElementAt(0).Table);
 			Assert.AreEqual("Name", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("TableWithoutAttributes", query.Columns.ElementAt(1).Table);
 			Assert.AreEqual("ID", query.Columns.ElementAt(1).Name);
+			Assert.AreEqual("TableWithoutAttributes", query.Columns.ElementAt(2).Table);
 			Assert.AreEqual("Description", query.Columns.ElementAt(2).Name);
+			Assert.AreEqual("TableWithoutAttributes", query.Columns.ElementAt(3).Table);
 			Assert.AreEqual("NullID", query.Columns.ElementAt(3).Name);
 		}
 		[TestMethod]
@@ -74,12 +83,54 @@ namespace FluentSQLLib.UnitTest
 
 			query = new Select<TableWithAttributes>().AllColumns();
 			Assert.AreEqual(4, query.Columns.Count());
+			Assert.AreEqual("Table", query.Columns.ElementAt(0).Table);
 			Assert.AreEqual("colName", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(1).Table);
 			Assert.AreEqual("colID", query.Columns.ElementAt(1).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(2).Table);
 			Assert.AreEqual("colDescription", query.Columns.ElementAt(2).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(3).Table);
+			Assert.AreEqual("colNullID", query.Columns.ElementAt(3).Name);
+		}
+		#endregion
+
+		#region select joined tables
+		[TestMethod]
+		public void Select_ShouldAddColumnsFromTwoClasses()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name)
+				.Column<TableWithAttributes>(tbl => tbl.Name);
+			Assert.AreEqual(2, query.Columns.Count());
+			Assert.AreEqual("TableWithoutAttributes", query.Columns.ElementAt(0).Table);
+			Assert.AreEqual("Name", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(1).Table);
+			Assert.AreEqual("colName", query.Columns.ElementAt(1).Name);
+		}
+
+
+		[TestMethod]
+		public void Select_ShouldAddAllColumnsFromJoinedTable()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().AllColumns<TableWithAttributes>();
+			Assert.AreEqual(4, query.Columns.Count());
+			Assert.AreEqual("Table", query.Columns.ElementAt(0).Table);
+			Assert.AreEqual("colName", query.Columns.ElementAt(0).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(1).Table);
+			Assert.AreEqual("colID", query.Columns.ElementAt(1).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(2).Table);
+			Assert.AreEqual("colDescription", query.Columns.ElementAt(2).Name);
+			Assert.AreEqual("Table", query.Columns.ElementAt(3).Table);
 			Assert.AreEqual("colNullID", query.Columns.ElementAt(3).Name);
 		}
 
+
+		#endregion
+
+		#region filters
 		[TestMethod]
 		public void Select_ShouldAddIIsEqualToFilterFromClassWithoutAttributes()
 		{
@@ -201,6 +252,62 @@ namespace FluentSQLLib.UnitTest
 			Assert.AreEqual(1, query.Filters.Count());
 			Assert.IsTrue(query.Filters.ElementAt(0) is IIsLowerThanFilter);
 		}
+		[TestMethod]
+		public void Select_ShouldAddIIsGreaterThanFilterFromClassWithoutAttributes()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID > 2);
+			Assert.AreEqual(1, query.Filters.Count());
+			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterThanFilter);
+		}
+		[TestMethod]
+		public void Select_ShouldAddIIsGreaterThanFilterFromClassWithAttributes()
+		{
+			ISelect<TableWithAttributes> query;
+
+			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID > 2);
+			Assert.AreEqual(1, query.Filters.Count());
+			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterThanFilter);
+		}
+
+		[TestMethod]
+		public void Select_ShouldAddIIsLowerOrEqualToFilterFromClassWithoutAttributes()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID <= 2);
+			Assert.AreEqual(1, query.Filters.Count());
+			Assert.IsTrue(query.Filters.ElementAt(0) is IIsLowerOrEqualToFilter);
+		}
+		[TestMethod]
+		public void Select_ShouldAddIIsLowerOrEqualToFilterFromClassWithAttributes()
+		{
+			ISelect<TableWithAttributes> query;
+
+			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID <= 2);
+			Assert.AreEqual(1, query.Filters.Count());
+			Assert.IsTrue(query.Filters.ElementAt(0) is IIsLowerOrEqualToFilter);
+		}
+		[TestMethod]
+		public void Select_ShouldAddIIsGreaterOrEqualToFilterFromClassWithoutAttributes()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID >= 2);
+			Assert.AreEqual(1, query.Filters.Count());
+			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterOrEqualToFilter);
+		}
+		[TestMethod]
+		public void Select_ShouldAddIIsGreaterOrEqualToFilterFromClassWithAttributes()
+		{
+			ISelect<TableWithAttributes> query;
+
+			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID >= 2);
+			Assert.AreEqual(1, query.Filters.Count());
+			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterOrEqualToFilter);
+		}
+		#endregion
 
 
 	}

@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace FluentSQLLib.Filters
 {
-	public class IsLowerOrEqualToFilter<TVal>: ColumnFilter, IIsLowerOrEqualToFilter<TVal>
+	public class IsLowerOrEqualToFilter: ColumnFilter, IIsLowerOrEqualToFilter
 	{
 
-		public IsLowerOrEqualToFilter(IColumn Column,TVal Value):base(Column,Value)
+		public IsLowerOrEqualToFilter(IColumn Column,object Value):base(Column,Value)
 		{
 			if (Column == null) throw new ArgumentNullException(nameof(Column));
 			if (Value == null) throw new ArgumentNullException(nameof(Value));

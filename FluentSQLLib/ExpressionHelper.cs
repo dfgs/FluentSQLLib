@@ -87,6 +87,18 @@ namespace FluentSQLLib
                             if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
                             else filter = new IsLowerThanFilter(column, value);
                             break;
+                        case ExpressionType.GreaterThan:
+                            if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
+                            else filter = new IsGreaterThanFilter(column, value);
+                            break;
+                        case ExpressionType.LessThanOrEqual:
+                            if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
+                            else filter = new IsLowerOrEqualToFilter(column, value);
+                            break;
+                        case ExpressionType.GreaterThanOrEqual:
+                            if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
+                            else filter = new IsGreaterOrEqualToFilter(column, value);
+                            break;
 
                         default: throw new ArgumentException($"Invalid expression (Operator): {Expression.ToString()}, operator expected");
                     }

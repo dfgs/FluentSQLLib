@@ -49,7 +49,7 @@ namespace FluentSQLLib.Queries
        
 
 
-        public ISelect<T> Column<TVal>(Expression<Func<T, TVal>> ValueExpression)
+        public ISelect<T> Column(Expression<Func<T, object?>> ValueExpression)
         {
             string propertyName;
             string columnName;
@@ -62,6 +62,21 @@ namespace FluentSQLLib.Queries
             return this;
 
         }
+        public ISelect<T> Column<TTable>(Expression<Func<TTable, object?>> ValueExpression)
+        {
+            string propertyName;
+            string columnName;
+
+            propertyName = ExpressionHelper.GetPropertyName(ValueExpression);
+            columnName = Schema<TTable>.GetColumnName(propertyName);
+
+            columns.Add(new Column(Schema<TTable>.GetTableName(), columnName));
+
+            return this;
+
+        }
+
+
         public ISelect<T> AllColumns()
         {
             string columnName;
@@ -70,7 +85,21 @@ namespace FluentSQLLib.Queries
             {
                 columnName = Schema<T>.GetColumnName(propertyName);
 
-                columns.Add(new Column(this.table.Name,columnName));
+                columns.Add(new Column(this.table.Name, columnName));
+            }
+
+            return this;
+
+        }
+        public ISelect<T> AllColumns<TTable>()
+        {
+            string columnName;
+
+            foreach (string propertyName in Schema<TTable>.GetProperties())
+            {
+                columnName = Schema<TTable>.GetColumnName(propertyName);
+
+                columns.Add(new Column(Schema<TTable>.GetTableName(), columnName));
             }
 
             return this;
