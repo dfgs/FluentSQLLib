@@ -94,7 +94,7 @@ namespace FluentSQLLib.UnitTest
 		}
 		#endregion
 
-		#region select joined tables
+		#region select from several tables
 		[TestMethod]
 		public void Select_ShouldAddColumnsFromTwoClasses()
 		{
@@ -137,16 +137,61 @@ namespace FluentSQLLib.UnitTest
 			ISelect<TableWithoutAttributes> query;
 
 			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(Filter.Evaluate<TableWithoutAttributes>( tbl=>tbl.Name=="Test") );
-			Assert.AreEqual(1, query.Filters.Count());
+			Assert.IsNotNull(query.Filter);
 
 			#pragma warning disable CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
 			Assert.ThrowsException<ArgumentNullException>(() => new Select<TableWithoutAttributes>().Where(null));
 			#pragma warning restore CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
 		}
-		
+
 
 		#endregion
 
+		#region select with sorts
+		[TestMethod]
+		public void Select_ShouldAddSortsFromClassWithoutAttributes()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Column(tbl => tbl.ID).OrderBy(tbl => tbl.Name).OrderBy(tbl => tbl.ID,OrderModes.DESC);
+			Assert.AreEqual(2, query.Sorts.Count());
+			Assert.AreEqual("TableWithoutAttributes", query.Sorts.ElementAt(0).Column.Table);
+			Assert.AreEqual("Name", query.Sorts.ElementAt(0).Column.Name);
+			Assert.AreEqual(OrderModes.ASC, query.Sorts.ElementAt(0).OrderMode);
+			Assert.AreEqual("TableWithoutAttributes", query.Sorts.ElementAt(1).Column.Table);
+			Assert.AreEqual("ID", query.Sorts.ElementAt(1).Column.Name);
+			Assert.AreEqual(OrderModes.DESC, query.Sorts.ElementAt(1).OrderMode);
+		}
+		[TestMethod]
+		public void Select_ShouldAddSortsFromClassWithAttributes()
+		{
+			ISelect<TableWithAttributes> query;
+
+			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Column(tbl => tbl.ID).OrderBy(tbl=>tbl.Name).OrderBy(tbl => tbl.ID, OrderModes.DESC);
+			Assert.AreEqual(2, query.Sorts.Count());
+			Assert.AreEqual("Table", query.Sorts.ElementAt(0).Column.Table);
+			Assert.AreEqual("colName", query.Sorts.ElementAt(0).Column.Name);
+			Assert.AreEqual(OrderModes.ASC, query.Sorts.ElementAt(0).OrderMode);
+			Assert.AreEqual("Table", query.Sorts.ElementAt(1).Column.Table);
+			Assert.AreEqual("colID", query.Sorts.ElementAt(1).Column.Name);
+			Assert.AreEqual(OrderModes.DESC, query.Sorts.ElementAt(1).OrderMode);
+		}
+
+		[TestMethod]
+		public void Select_ShouldAddSortsFromSeveralTables()
+		{
+			ISelect<TableWithoutAttributes> query;
+
+			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Column<TableWithAttributes>(tbl => tbl.ID).OrderBy(tbl => tbl.Name).OrderBy<TableWithAttributes>(tbl => tbl.ID, OrderModes.DESC);
+			Assert.AreEqual(2, query.Sorts.Count());
+			Assert.AreEqual("TableWithoutAttributes", query.Sorts.ElementAt(0).Column.Table);
+			Assert.AreEqual("Name", query.Sorts.ElementAt(0).Column.Name);
+			Assert.AreEqual(OrderModes.ASC, query.Sorts.ElementAt(0).OrderMode);
+			Assert.AreEqual("Table", query.Sorts.ElementAt(1).Column.Table);
+			Assert.AreEqual("colID", query.Sorts.ElementAt(1).Column.Name);
+			Assert.AreEqual(OrderModes.DESC, query.Sorts.ElementAt(1).OrderMode);
+		}
+		#endregion
 
 
 

@@ -10,11 +10,7 @@ namespace FluentSQLLib.Queries
     public class Select<T> : ISelect<T>
     {
 
-        public OrderModes OrderMode
-        {
-            get;
-            private set;
-        }
+      
 
         public int Limit
         {
@@ -28,19 +24,18 @@ namespace FluentSQLLib.Queries
         private List<IColumn> columns;
         public IEnumerable<IColumn> Columns => columns;
 
-        private List<IColumn> orders;
-        public IEnumerable<IColumn> Orders => orders;
+        private List<ISort> sorts;
+        public IEnumerable<ISort> Sorts => sorts;
 
-        private List<IFilter> filters;
-        public IEnumerable<IFilter> Filters => filters;
+        private IFilter? filter;
+        public IFilter? Filter => filter;
 
         public Select()
 		{
             this.table = new Table(Schema<T>.GetTableName());
             Limit = -1;
             columns = new List<IColumn>();
-            filters = new List<IFilter>();
-            orders = new List<IColumn>();
+            sorts = new List<ISort>();
         }
 
 
@@ -107,22 +102,38 @@ namespace FluentSQLLib.Queries
         public ISelect<T> Where(IFilter Filter)
         {
             if (Filter == null) throw new ArgumentNullException(nameof(Filter));
-            filters.Add(Filter);
+            this.filter=Filter;
 
             return this;
         }
         
 
-        public ISelect<T> OrderBy(params IColumn[] Columns)
+        
+        public ISelect<T> OrderBy(Expression<Func<T, object?>> ValueExpression, OrderModes OrderMode=OrderModes.ASC)
         {
-            if (Columns == null) throw new ArgumentNullException(nameof(Columns));
-            return OrderBy(OrderModes.ASC, Columns);
+            string propertyName;
+            string columnName;
+
+            if (ValueExpression == null) throw new ArgumentNullException(nameof(ValueExpression));
+
+            propertyName = ExpressionHelper.GetPropertyName(ValueExpression);
+            columnName = Schema<T>.GetColumnName(propertyName);
+
+            sorts.Add(new Sort(new Column(Schema<T>.GetTableName(), columnName), OrderMode));
+            return this;
         }
-        public ISelect<T> OrderBy(OrderModes OrderMode, params IColumn[] Columns)
+       
+        public ISelect<T> OrderBy<TTable>(Expression<Func<TTable, object?>> ValueExpression, OrderModes OrderMode = OrderModes.ASC)
         {
-            if (Columns == null) throw new ArgumentNullException(nameof(Columns));
-            this.OrderMode = OrderMode;
-            orders.AddRange(Columns);
+            string propertyName;
+            string columnName;
+
+            if (ValueExpression == null) throw new ArgumentNullException(nameof(ValueExpression));
+
+            propertyName = ExpressionHelper.GetPropertyName(ValueExpression);
+            columnName = Schema<TTable>.GetColumnName(propertyName);
+
+            sorts.Add(new Sort(new Column(Schema<TTable>.GetTableName(), columnName), OrderMode));
             return this;
         }
 

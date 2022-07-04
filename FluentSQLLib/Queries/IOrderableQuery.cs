@@ -9,12 +9,8 @@ namespace FluentSQLLib.Queries
 {
 	public interface IOrderableQuery : IQuery
 	{
-		OrderModes OrderMode
-		{
-			get;
-		}
 
-		IEnumerable<IColumn> Orders
+		IEnumerable<ISort> Sorts
 		{
 			get;
 		}

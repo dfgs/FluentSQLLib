@@ -226,6 +226,34 @@ namespace FluentSQLLib.UnitTest
 			Assert.AreEqual(3, orFilter.Members.Count());
 
 		}
+
+
+		[TestMethod]
+		public void Filter_ShouldEvaluateMixedFilterWithTwoMembers()
+		{
+			IFilter filter;
+			IOrFilter? orFilter;
+
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.Name == null).And<TableWithAttributes>(tbl => tbl.Name == "Test2").Or<TableWithoutAttributes>(tbl=>tbl.ID<2);
+			orFilter = filter as IOrFilter;
+			Assert.IsNotNull(orFilter);
+			Assert.AreEqual(2, orFilter.Members.Count());
+
+		}
+		[TestMethod]
+		public void Filter_ShouldEvaluateMixedFilterWithThreeMembers()
+		{
+			IFilter filter;
+			IOrFilter? orFilter;
+
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.Name == null).And<TableWithAttributes>(tbl => tbl.Name == "Test2").Or<TableWithAttributes>(tbl => tbl.ID < 2);
+			orFilter = filter as IOrFilter;
+			Assert.IsNotNull(orFilter);
+			Assert.AreEqual(2, orFilter.Members.Count());
+
+		}
+
+
 		#endregion
 
 	}
