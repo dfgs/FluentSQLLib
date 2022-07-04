@@ -9,10 +9,7 @@ namespace FluentSQLLib.Queries
 {
 	public interface IQuery
 	{
-		ITable Table
-		{
-			get;
-		}
+		
 
 
 

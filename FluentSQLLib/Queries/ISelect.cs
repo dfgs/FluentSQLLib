@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FluentSQLLib.Queries
 {
-	public interface ISelect<T>: IOrderableQuery
+	public interface ISelect: IOrderableQuery
 	{
 		int Limit
 		{
@@ -20,20 +20,23 @@ namespace FluentSQLLib.Queries
 		{
 			get;
 		}
+
+		IEnumerable<IJoinCondition> JoinConditions
+		{
+			get;
+		}
+
 		IFilter? Filter
 		{
 			get;
 		}
-		//ISelect From<T>();
 
-		ISelect<T> AllColumns();
-		ISelect<T> AllColumns<TTable>();
-		ISelect<T> Column(Expression<Func<T,object?>> ValueExpression);
-		ISelect<T> Column<TTable>(Expression<Func<TTable, object?>> ValueExpression);
-		ISelect<T> Where(IFilter Filter);
-		ISelect<T> OrderBy(Expression<Func<T, object?>> ValueExpression, OrderModes OrderMode=OrderModes.ASC);
-		ISelect<T> OrderBy<TTable>(Expression<Func<TTable, object?>> ValueExpression, OrderModes OrderMode = OrderModes.ASC);
-		ISelect<T> Top(int Limit);
+		ISelect AllFrom<TTable>();
+		ISelect From<TTable>(params Expression<Func<TTable, object?>>[] Columns);
+		ISelect Where(IFilter Filter);
+		ISelect OrderBy<TTable>(Expression<Func<TTable, object?>> Column, OrderModes OrderMode = OrderModes.ASC);
+		ISelect Top(int Limit);
+		ISelect Join<TTable1,TTable2>(Expression<Func<TTable1, object?>> Column1, Expression<Func<TTable2, object?>> Column2);
 
 
 	}

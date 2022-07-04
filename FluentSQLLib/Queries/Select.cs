@@ -7,7 +7,7 @@ namespace FluentSQLLib.Queries
 {
    
 
-    public class Select<T> : ISelect<T>
+    public class Select : ISelect
     {
 
       
@@ -18,8 +18,7 @@ namespace FluentSQLLib.Queries
             private set;
         }
 
-        private ITable table;
-        public ITable Table => table;
+        
 
         private List<IColumn> columns;
         public IEnumerable<IColumn> Columns => columns;
@@ -27,15 +26,18 @@ namespace FluentSQLLib.Queries
         private List<ISort> sorts;
         public IEnumerable<ISort> Sorts => sorts;
 
+        private List<IJoinCondition> joinConditions;
+        public IEnumerable<IJoinCondition> JoinConditions => joinConditions;
+
         private IFilter? filter;
         public IFilter? Filter => filter;
 
         public Select()
 		{
-            this.table = new Table(Schema<T>.GetTableName());
             Limit = -1;
             columns = new List<IColumn>();
             sorts = new List<ISort>();
+            joinConditions = new List<IJoinCondition>();
         }
 
 
@@ -44,49 +46,26 @@ namespace FluentSQLLib.Queries
        
 
 
-        public ISelect<T> Column(Expression<Func<T, object?>> ValueExpression)
+       
+        public ISelect From<TTable>(params Expression<Func<TTable, object?>>[] Columns)
         {
             string propertyName;
             string columnName;
+            
+            if (Columns == null) throw new ArgumentNullException(nameof(Columns));
 
-            propertyName = ExpressionHelper.GetPropertyName(ValueExpression);
-            columnName = Schema<T>.GetColumnName(propertyName);
-
-            columns.Add(new Column(this.table.Name, columnName));
-
-            return this;
-
-        }
-        public ISelect<T> Column<TTable>(Expression<Func<TTable, object?>> ValueExpression)
-        {
-            string propertyName;
-            string columnName;
-
-            propertyName = ExpressionHelper.GetPropertyName(ValueExpression);
-            columnName = Schema<TTable>.GetColumnName(propertyName);
-
-            columns.Add(new Column(Schema<TTable>.GetTableName(), columnName));
-
-            return this;
-
-        }
-
-
-        public ISelect<T> AllColumns()
-        {
-            string columnName;
-
-            foreach (string propertyName in Schema<T>.GetProperties())
+            foreach (Expression<Func<TTable, object?>> expression in Columns)
             {
-                columnName = Schema<T>.GetColumnName(propertyName);
+                propertyName = ExpressionHelper.GetPropertyName(expression);
+                columnName = Schema<TTable>.GetColumnName(propertyName);
 
-                columns.Add(new Column(this.table.Name, columnName));
+                columns.Add(new Column(Schema<TTable>.GetTableName(), columnName));
             }
-
             return this;
 
         }
-        public ISelect<T> AllColumns<TTable>()
+
+        public ISelect AllFrom<TTable>()
         {
             string columnName;
 
@@ -99,7 +78,7 @@ namespace FluentSQLLib.Queries
             return this;
         }
 
-        public ISelect<T> Where(IFilter Filter)
+        public ISelect Where(IFilter Filter)
         {
             if (Filter == null) throw new ArgumentNullException(nameof(Filter));
             this.filter=Filter;
@@ -107,41 +86,47 @@ namespace FluentSQLLib.Queries
             return this;
         }
         
-
-        
-        public ISelect<T> OrderBy(Expression<Func<T, object?>> ValueExpression, OrderModes OrderMode=OrderModes.ASC)
+               
+        public ISelect OrderBy<TTable>(Expression<Func<TTable, object?>> Column, OrderModes OrderMode = OrderModes.ASC)
         {
             string propertyName;
             string columnName;
 
-            if (ValueExpression == null) throw new ArgumentNullException(nameof(ValueExpression));
+            if (Column == null) throw new ArgumentNullException(nameof(Column));
 
-            propertyName = ExpressionHelper.GetPropertyName(ValueExpression);
-            columnName = Schema<T>.GetColumnName(propertyName);
-
-            sorts.Add(new Sort(new Column(Schema<T>.GetTableName(), columnName), OrderMode));
-            return this;
-        }
-       
-        public ISelect<T> OrderBy<TTable>(Expression<Func<TTable, object?>> ValueExpression, OrderModes OrderMode = OrderModes.ASC)
-        {
-            string propertyName;
-            string columnName;
-
-            if (ValueExpression == null) throw new ArgumentNullException(nameof(ValueExpression));
-
-            propertyName = ExpressionHelper.GetPropertyName(ValueExpression);
+            propertyName = ExpressionHelper.GetPropertyName(Column);
             columnName = Schema<TTable>.GetColumnName(propertyName);
 
             sorts.Add(new Sort(new Column(Schema<TTable>.GetTableName(), columnName), OrderMode));
             return this;
         }
 
-        public ISelect<T> Top(int Limit)
+        public ISelect Top(int Limit)
         {
             this.Limit = Limit;
             return this;
         }
+
+        public ISelect Join<TTable1, TTable2>(Expression<Func<TTable1, object?>> Column1, Expression<Func<TTable2, object?>> Column2)
+		{
+            string propertyName1;
+            string columnName1;
+            string propertyName2;
+            string columnName2;
+            IJoinCondition joinCondition;
+
+            if (Column1 == null) throw new ArgumentNullException(nameof(Column1));
+            if (Column2 == null) throw new ArgumentNullException(nameof(Column2));
+
+            propertyName1 = ExpressionHelper.GetPropertyName(Column1);
+            columnName1 = Schema<TTable1>.GetColumnName(propertyName1);
+            propertyName2 = ExpressionHelper.GetPropertyName(Column2);
+            columnName2 = Schema<TTable2>.GetColumnName(propertyName2);
+
+            joinCondition = new JoinCondition(new Column(Schema<TTable1>.GetTableName(), columnName1), new Column(Schema<TTable2>.GetTableName(), columnName2));
+            joinConditions.Add(joinCondition);
+            return this;
+		}
 
 
     }

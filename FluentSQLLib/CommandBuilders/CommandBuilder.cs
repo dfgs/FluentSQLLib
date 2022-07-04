@@ -16,7 +16,7 @@ namespace FluentSQLLib.CommandBuilders
 		//protected abstract string OnFormatFilter(IFilter Filter, ref int Index);
 		//protected abstract string OnFormatSetter(ISetter Setter, ref int Index);
 
-		protected abstract DbCommand OnBuildSelectCommand<T>(ISelect<T> Query);
+		//protected abstract DbCommand OnBuildSelectCommand<T>(ISelect<T> Query);
 		/*protected abstract DbCommand OnBuildDeleteCommand(IDelete Query);
 		protected abstract DbCommand OnBuildUpdateCommand(IUpdate Query);
 		protected abstract DbCommand OnBuildInsertCommand(IInsert Query);
@@ -33,7 +33,7 @@ namespace FluentSQLLib.CommandBuilders
 
 			//if (Query is ISelectIdentity selectIdentity) return OnBuildSelectIdentityCommand(selectIdentity);
 			//if (Query.Table == null) throw new InvalidOperationException("No table specified in query");
-			if (Query is ISelect<T> select) return OnBuildSelectCommand(select);
+			//if (Query is ISelect<T> select) return OnBuildSelectCommand(select);
 			/*if (Query is IDelete delete) return OnBuildDeleteCommand(delete);
 			if (Query is IUpdate update) return OnBuildUpdateCommand(update);
 			if (Query is IInsert insert) return OnBuildInsertCommand(insert);
