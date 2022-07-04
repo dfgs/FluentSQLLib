@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace FluentSQLLib.Filters
 			members.Add(Filter);
 		}
 
-		public abstract IAndFilter And(IFilter Filter);
-		public abstract IOrFilter Or(IFilter Filter);
+		public abstract IAndFilter And<T>(Expression<Func<T, bool>> FilterExpression);
+		public abstract IOrFilter Or<T>(Expression<Func<T, bool>> FilterExpression);
 	}
 }

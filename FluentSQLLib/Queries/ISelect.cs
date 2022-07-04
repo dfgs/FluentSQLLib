@@ -30,7 +30,7 @@ namespace FluentSQLLib.Queries
 		ISelect<T> AllColumns<TTable>();
 		ISelect<T> Column(Expression<Func<T,object?>> ValueExpression);
 		ISelect<T> Column<TTable>(Expression<Func<TTable, object?>> ValueExpression);
-		ISelect<T> Where(Expression<Func<T,bool>> FilterExpression);
+		ISelect<T> Where(IFilter Filter);
 		ISelect<T> OrderBy(params IColumn[] Columns);
 		ISelect<T> OrderBy(OrderModes OrderMode, params IColumn[] Columns);
 		ISelect<T> Top(int Limit);

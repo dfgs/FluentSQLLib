@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,32 +21,38 @@ namespace FluentSQLLib.Filters
 			return $"({String.Join(" AND ", FormattedMembers)})";
 		}
 
-		public override IAndFilter And(IFilter Filter)
+		public override IAndFilter And<T>(Expression<Func<T, bool>> FilterExpression)
 		{
-			if (Filter == null) throw new ArgumentNullException(nameof(Filter));
-			if (Filter is IAndFilter other)
+			IFilter filter;
+			if (FilterExpression == null) throw new ArgumentNullException(nameof(FilterExpression));
+
+			filter = ExpressionHelper.GetFilter(FilterExpression);
+			if (filter is IAndFilter other)
 			{
 				foreach (IFilter item in other.Members) Add(item);
 				return this;
 			}
 			else
 			{
-				Add(Filter);
+				Add(filter);
 				return this;
 			}
 		}
 
-		public override IOrFilter Or(IFilter Filter)
+		public override IOrFilter Or<T>(Expression<Func<T, bool>> FilterExpression)
 		{
-			if (Filter == null) throw new ArgumentNullException(nameof(Filter));
-			if (Filter is IOrFilter other)
+			IFilter filter;
+			if (FilterExpression == null) throw new ArgumentNullException(nameof(FilterExpression));
+
+			filter = ExpressionHelper.GetFilter(FilterExpression);
+			if (filter is IOrFilter other)
 			{
 				other.Add(this);
 				return other;
 			}
 			else
 			{
-				return new OrFilter(this, Filter);
+				return new OrFilter(this, filter);
 			}
 		}
 

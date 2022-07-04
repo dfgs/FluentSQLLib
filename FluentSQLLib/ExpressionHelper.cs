@@ -48,7 +48,7 @@ namespace FluentSQLLib
                 default: throw new ArgumentException($"Invalid expression: {Expression.ToString()}, member expected");
             }
         }
-
+       
         public static string GetPropertyName<T,TVal>(Expression<Func<T, TVal>> Expression)
         {
             if (Expression==null) throw new ArgumentNullException(nameof(Expression));
@@ -63,56 +63,65 @@ namespace FluentSQLLib
             IFilter filter;
             IColumn column;
 
-            if (Expression == null) throw new ArgumentNullException(nameof(Expression));
 
-            switch (Expression.Body)
-            {
-                
-                case BinaryExpression binaryExpression:
-                    propertyName=GetMember(binaryExpression.Left);
+            if (Expression == null) throw new ArgumentNullException(nameof(Expression));
+            
+            if (!(Expression.Body is BinaryExpression binaryExpression)) throw new ArgumentException($"Invalid expression: {Expression.ToString()}, binary expression expected");
+
+
+            switch(binaryExpression.NodeType)
+			{
+               case ExpressionType.Equal:
+                    propertyName = GetMember(binaryExpression.Left);
                     column = new Column(Schema<T>.GetTableName(), propertyName);
                     value = ExpressionHelper.GetConstant(binaryExpression.Right);
+                    if (value == null) filter = new IsNullFilter(column);
+                    else filter = new IsEqualToFilter(column, value);
+                    break;
+                case ExpressionType.NotEqual:
+                    propertyName = GetMember(binaryExpression.Left);
+                    column = new Column(Schema<T>.GetTableName(), propertyName);
+                    value = ExpressionHelper.GetConstant(binaryExpression.Right);
+                    if (value == null) filter = new IsNotNullFilter(column);
+                    else filter = new IsNotEqualToFilter(column, value);
+                    break;
+                case ExpressionType.LessThan:
+                    propertyName = GetMember(binaryExpression.Left);
+                    column = new Column(Schema<T>.GetTableName(), propertyName);
+                    value = ExpressionHelper.GetConstant(binaryExpression.Right);
+                    if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
+                    else filter = new IsLowerThanFilter(column, value);
+                    break;
+                case ExpressionType.GreaterThan:
+                    propertyName = GetMember(binaryExpression.Left);
+                    column = new Column(Schema<T>.GetTableName(), propertyName);
+                    value = ExpressionHelper.GetConstant(binaryExpression.Right);
+                    if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
+                    else filter = new IsGreaterThanFilter(column, value);
+                    break;
+                case ExpressionType.LessThanOrEqual:
+                    propertyName = GetMember(binaryExpression.Left);
+                    column = new Column(Schema<T>.GetTableName(), propertyName);
+                    value = ExpressionHelper.GetConstant(binaryExpression.Right);
+                    if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
+                    else filter = new IsLowerOrEqualToFilter(column, value);
+                    break;
+                case ExpressionType.GreaterThanOrEqual:
+                    propertyName = GetMember(binaryExpression.Left);
+                    column = new Column(Schema<T>.GetTableName(), propertyName);
+                    value = ExpressionHelper.GetConstant(binaryExpression.Right);
+                    if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
+                    else filter = new IsGreaterOrEqualToFilter(column, value);
+                    break;
 
-                    switch(binaryExpression.NodeType)
-					{
-                        case ExpressionType.Equal:
-                            if (value == null) filter = new IsNullFilter(column);
-                            else filter = new IsEqualToFilter(column, value);
-                            break;
-                        case ExpressionType.NotEqual:
-                            if (value == null) filter = new IsNotNullFilter(column);
-                            else filter = new IsNotEqualToFilter(column, value);
-                            break;
-                        case ExpressionType.LessThan:
-                            if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
-                            else filter = new IsLowerThanFilter(column, value);
-                            break;
-                        case ExpressionType.GreaterThan:
-                            if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
-                            else filter = new IsGreaterThanFilter(column, value);
-                            break;
-                        case ExpressionType.LessThanOrEqual:
-                            if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
-                            else filter = new IsLowerOrEqualToFilter(column, value);
-                            break;
-                        case ExpressionType.GreaterThanOrEqual:
-                            if (value == null) throw new ArgumentException($"Invalid expression (Right): {Expression.ToString()}, non null value expected");
-                            else filter = new IsGreaterOrEqualToFilter(column, value);
-                            break;
-
-                        default: throw new ArgumentException($"Invalid expression (Operator): {Expression.ToString()}, operator expected");
-                    }
-                    
-                    break;               
-                default: throw new ArgumentException($"Invalid expression: {Expression.ToString()}, binary expression expected");
+                default: throw new ArgumentException($"Invalid expression (Operator): {Expression.ToString()}, operator expected");
             }
-
-            
-            
-
+                    
             return filter;
 
-
         }
+
+
+
     }
 }

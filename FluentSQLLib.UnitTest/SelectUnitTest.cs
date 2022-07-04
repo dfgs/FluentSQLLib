@@ -130,184 +130,24 @@ namespace FluentSQLLib.UnitTest
 
 		#endregion
 
-		#region filters
+		#region Where
 		[TestMethod]
-		public void Select_ShouldAddIIsEqualToFilterFromClassWithoutAttributes()
+		public void Select_ShouldAddFilter()
 		{
 			ISelect<TableWithoutAttributes> query;
 
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl=>tbl.Name=="Test");
+			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(Filter.Evaluate<TableWithoutAttributes>( tbl=>tbl.Name=="Test") );
 			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsEqualToFilter);
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID == 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsEqualToFilter);
+
+			#pragma warning disable CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
+			Assert.ThrowsException<ArgumentNullException>(() => new Select<TableWithoutAttributes>().Where(null));
+			#pragma warning restore CS8625 // Impossible de convertir un littéral ayant une valeur null en type référence non-nullable.
 		}
-		[TestMethod]
-		public void Select_ShouldAddIIsEqualToFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
+		
 
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.Name == "Test");
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsEqualToFilter);
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID == 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsEqualToFilter);
-		}
-
-
-		[TestMethod]
-		public void Select_ShouldAddIIsNotEqualToFilterFromClassWithoutAttributes()
-		{
-			ISelect<TableWithoutAttributes> query;
-
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.Name != "Test");
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotEqualToFilter);
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID != 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotEqualToFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsNotEqualToFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
-
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.Name != "Test");
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotEqualToFilter);
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID != 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotEqualToFilter);
-		}
-
-		[TestMethod]
-		public void Select_ShouldAddIIsNullFilterFromClassWithoutAttributes()
-		{
-			ISelect<TableWithoutAttributes> query;
-
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.Name == null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNullFilter);
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID == null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNullFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsNullFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
-
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.Name == null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNullFilter);
-			// expected warning
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID == null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNullFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsNotNullFilterFromClassWithoutAttributes()
-		{
-			ISelect<TableWithoutAttributes> query;
-
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.Name != null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotNullFilter);
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID != null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotNullFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsNotNullFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
-
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.Name != null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotNullFilter);
-			// expected warning
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID != null);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsNotNullFilter);
-		}
-
-
-		[TestMethod]
-		public void Select_ShouldAddIIsLowerThanFilterFromClassWithoutAttributes()
-		{
-			ISelect<TableWithoutAttributes> query;
-
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID < 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsLowerThanFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsLowerThanFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
-
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID < 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsLowerThanFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsGreaterThanFilterFromClassWithoutAttributes()
-		{
-			ISelect<TableWithoutAttributes> query;
-
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID > 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterThanFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsGreaterThanFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
-
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID > 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterThanFilter);
-		}
-
-		[TestMethod]
-		public void Select_ShouldAddIIsLowerOrEqualToFilterFromClassWithoutAttributes()
-		{
-			ISelect<TableWithoutAttributes> query;
-
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID <= 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsLowerOrEqualToFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsLowerOrEqualToFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
-
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID <= 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsLowerOrEqualToFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsGreaterOrEqualToFilterFromClassWithoutAttributes()
-		{
-			ISelect<TableWithoutAttributes> query;
-
-			query = new Select<TableWithoutAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID >= 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterOrEqualToFilter);
-		}
-		[TestMethod]
-		public void Select_ShouldAddIIsGreaterOrEqualToFilterFromClassWithAttributes()
-		{
-			ISelect<TableWithAttributes> query;
-
-			query = new Select<TableWithAttributes>().Column(tbl => tbl.Name).Where(tbl => tbl.ID >= 2);
-			Assert.AreEqual(1, query.Filters.Count());
-			Assert.IsTrue(query.Filters.ElementAt(0) is IIsGreaterOrEqualToFilter);
-		}
 		#endregion
+
+
 
 
 	}

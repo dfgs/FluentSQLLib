@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,33 +27,42 @@ namespace FluentSQLLib.Filters
 			return $"{FormattedColumn} IS NULL";
 		}
 
-		public IAndFilter And(IFilter Filter)
+		public IAndFilter And<T>(Expression<Func<T, bool>> FilterExpression)
 		{
-			if (Filter == null) throw new ArgumentNullException(nameof(Filter));
-			if (Filter is IAndFilter other)
+			IFilter filter;
+			if (FilterExpression == null) throw new ArgumentNullException(nameof(FilterExpression));
+
+			filter = ExpressionHelper.GetFilter(FilterExpression);
+
+			if (filter is IAndFilter other)
 			{
 				other.Add(this);
 				return other;
 			}
 			else
 			{
-				return new AndFilter(this, Filter);
+				return new AndFilter(this, filter);
 			}
 		}
 
-		public IOrFilter Or(IFilter Filter)
+		public IOrFilter Or<T>(Expression<Func<T, bool>> FilterExpression)
 		{
-			if (Filter == null) throw new ArgumentNullException(nameof(Filter));
-			if (Filter is IOrFilter other)
+			IFilter filter;
+			if (FilterExpression == null) throw new ArgumentNullException(nameof(FilterExpression));
+
+			filter = ExpressionHelper.GetFilter(FilterExpression);
+
+			if (filter is IOrFilter other)
 			{
 				other.Add(this);
 				return other;
 			}
 			else
 			{
-				return new OrFilter(this, Filter);
+				return new OrFilter(this, filter);
 			}
 		}
+
 
 
 	}

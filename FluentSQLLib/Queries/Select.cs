@@ -101,21 +101,17 @@ namespace FluentSQLLib.Queries
 
                 columns.Add(new Column(Schema<TTable>.GetTableName(), columnName));
             }
-
             return this;
-
         }
 
-        public ISelect<T> Where(Expression<Func<T, bool>> FilterExpression)
+        public ISelect<T> Where(IFilter Filter)
         {
-            IFilter filter;
-
-            filter = ExpressionHelper.GetFilter(FilterExpression);
-            filters.Add(filter);
+            if (Filter == null) throw new ArgumentNullException(nameof(Filter));
+            filters.Add(Filter);
 
             return this;
         }
-
+        
 
         public ISelect<T> OrderBy(params IColumn[] Columns)
         {
