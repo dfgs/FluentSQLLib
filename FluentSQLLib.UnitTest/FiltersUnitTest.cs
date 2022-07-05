@@ -177,6 +177,66 @@ namespace FluentSQLLib.UnitTest
 		}
 		#endregion
 
+		#region filter expressions
+		[TestMethod]
+		public void Filter_ShouldEvaluateFilterUsingFieldAsRightMember()
+		{
+			IFilter filter;
+			int paramID;
+			string paramName;
+
+			paramID = 2;
+			paramName = "Test";
+
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.Name == paramName);
+			Assert.IsTrue(filter is IIsEqualToFilter);
+			Assert.AreEqual("Test", ((IIsEqualToFilter)filter).Value);
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.ID == paramID);
+			Assert.IsTrue(filter is IIsEqualToFilter);
+			Assert.AreEqual(2, ((IIsEqualToFilter)filter).Value);
+		}
+		private string GetString(string Value)
+		{
+			return Value;
+		}
+		private int GetInt(int Value)
+		{
+			return Value;
+		}
+		[TestMethod]
+		public void Filter_ShouldEvaluateFilterUsingMethodAsRightMember()
+		{
+			IFilter filter;
+
+
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.Name == GetString("Test") ) ;
+			Assert.IsTrue(filter is IIsEqualToFilter);
+			Assert.AreEqual("Test", ((IIsEqualToFilter)filter).Value);
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.ID == GetInt(2));
+			Assert.IsTrue(filter is IIsEqualToFilter);
+			Assert.AreEqual(2, ((IIsEqualToFilter)filter).Value);
+		}
+		[TestMethod]
+		public void Filter_ShouldEvaluateFilterUsingDelegateAsRightMember()
+		{
+			IFilter filter;
+			Func<string> delegateString;
+			Func<int> delegateInt;
+
+			delegateString = new Func<string>(() => GetString("Test"));
+			delegateInt = new Func<int>(() => GetInt(2));
+
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.Name == delegateString());
+			Assert.IsTrue(filter is IIsEqualToFilter);
+			Assert.AreEqual("Test", ((IIsEqualToFilter)filter).Value);
+			filter = Filter.Evaluate<TableWithoutAttributes>(tbl => tbl.ID == delegateInt());
+			Assert.IsTrue(filter is IIsEqualToFilter);
+			Assert.AreEqual(2, ((IIsEqualToFilter)filter).Value);
+		}
+
+		#endregion
+
+
 		#region binary filters
 		[TestMethod]
 		public void Filter_ShouldEvaluateAndFilterWithTwoMembers()

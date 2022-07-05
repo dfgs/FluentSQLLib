@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,13 +12,29 @@ namespace FluentSQLLib
 {
 	public static class ExpressionHelper
 	{
+        private static object? GetValue(Expression Member)
+        {
+            var objectMember = Expression.Convert(Member, typeof(object));
 
+            var getterLambda = Expression.Lambda<Func<object>>(objectMember);
+
+            var getter = getterLambda.Compile();
+
+            return getter();
+        }
+       
         private static object? GetConstant(Expression Expression)
         {
             if (Expression == null) throw new ArgumentNullException(nameof(Expression));
 
             switch (Expression)
             {
+                case InvocationExpression invocationExpression:
+                    return GetValue(invocationExpression);
+                case MethodCallExpression methodExpression:
+                    return GetValue(methodExpression);
+                 case MemberExpression memberExpression:
+                    return GetValue(memberExpression);
                 case ConstantExpression constantExpression:
                     return constantExpression.Value;
                 case UnaryExpression unaryExpression:
@@ -68,7 +85,7 @@ namespace FluentSQLLib
             
             if (!(Expression.Body is BinaryExpression binaryExpression)) throw new ArgumentException($"Invalid expression: {Expression.ToString()}, binary expression expected");
 
-
+            
             switch(binaryExpression.NodeType)
 			{
                case ExpressionType.Equal:
